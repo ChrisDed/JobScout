@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<!-- To make page responsive on mobile -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<title>JobScout | Jobs</title>
+	{% load static %}
+	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="{% static 'employees/css/dashboard.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'employees/css/listing.css' %}">
+	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+	<link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet">
+	<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+	<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-nav-demo" aria-expanded="false">
+			    	<span class="sr-only">Toggle navigation</span>
+			        <span class="icon-bar"></span>
+			        <span class="icon-bar"></span>
+			        <span class="icon-bar"></span>
+			    </button>
+				<a href="/" class="navbar-brand">JobScout</a>
+			</div>
+			<div class="collapse navbar-collapse" id="bs-nav-demo">
+				<ul class="nav navbar-nav">
+                    <li><a href="/jobs">Home</a></li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+                    {% if 'user_id' in request.session %}
+                        <!-- <li><a href="/user/{{ user.id }}"><i class="fa fa-user"></i> Hi, {{ user.first_name }}</a></li> -->
+                        <li class="dropdown">
+                            <a href="/user/{{ user.id }}" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user"></i> Hi, {{ user.first_name }} <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+								<li><a href="/user/{{ user.id }}">Profile</a></li>
+								<li><a href="/user/{{ user.id }}/resume">Resume</a></li>
+								<li><a href="/user/{{ user.id }}/edit/profile">Edit Profile</a></li>
+								<li><a href="/user/{{ user.id }}/edit/resume">Edit Resume</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="/logout">Logout</a></li>
+                    {% else %}
+                        <li><a href="/signup">Sign up <i class="fa fa-user-plus" aria-hidden="true"></i></a></li>
+                        <li><a href="/login">Login <i class="fa fa-user" aria-hidden="true"></i></a></li>
+                    {% endif %}
+				</ul>
+			</div>
+		</div>	
+	</nav>
+	
+	<div class="container">
+		<div class="row">
+			<div id="listingTop" class="col-lg-12">
+				<div id="listing">
+                    <h1>{{ listing.title }}</a></h1>
+                    <h5><b>{{ listing.employer.company_name }}</b> - {{ listing.city }}</h5>
+					<h3>Company Description:</h3>
+					<div class="well">
+						<h5>{{ listing.company_description }}</h5>
+					</div>
+					<h3>Job Description: </h3>
+					<div class="well">
+						<h5>{{ listing.job_description }}</h5>
+					</div>
+                    {% if 'user_id' in request.session and resume and address %}
+                        <form action="/jobs/application/{{ listing.id }}/process" method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="user_id" value="{{ user.id }}">
+                            <button type="submit" class="btn btn-default btn-success">Apply</button>
+                        </form>
+					{% elif 'user_id' in request.session %}
+						<a href="/user/{{ request.session.user_id }}"><button class="btn btn-default">Add Resume/Address</button></a>
+					{% else %}
+                        <a href="/signup"><button class="btn btn-default">Signup To Apply</button></a>
+                    {% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+</body>
+</html>
